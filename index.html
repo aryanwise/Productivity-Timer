@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productivity Timer</title>
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="task-section">
+            <h2>Keep It Simple!</h2>
+            <ul id="task-list"></ul>
+            <button id="clear-tasks-btn" class="clear-btn">Clear</button>
+        </div>
+        <div class="timer-section">
+            <h1>Timer</h1>
+            <div id="timer" onclick="showTimeModal()">50:00</div>
+            <textarea id="task-input" placeholder="Add Tasks!"></textarea>
+            <div class="buttons">
+                <button id="toggle-btn" class="toggle-btn">Start</button>
+                <button id="reset-btn" class="reset-btn">Reset</button>
+            </div>
+        </div>
+    </div>
+    <div id="time-modal" class="modal">
+        <div class="modal-content">
+            <h3>Set Time</h3>
+            <div class="time-input-container">
+                <input type="text" id="time-input" value="00:00:00" pattern="\d{2}:\d{2}:\d{2}" placeholder="HH:MM:SS">
+            </div>
+            <button class="modal-btn" onclick="setTime()">Set</button>
+            <p class="default-text">Default: 50:00</p>
+        </div>
+    </div>
+    <script src="static/js/script.js"></script>
+</body>
+
+</html>
