@@ -4,7 +4,10 @@ A simple web-based productivity timer app designed to help users manage tasks wi
 
 ## Features
 
-- **Countdown Timer**: Set a custom time (default 50 minutes) via a modal, starts/stops with a toggle button, and resets to default or previous time.
+- **Countdown Timer**: Set a custom time (default 50 minutes) via a modal, starts/stops with a toggle button, and resets to default or previous user-entered time.
+  - **Blinking Effect**: Starts flashing (white to dark grey) continuously from 10 seconds remaining until `00:00`.
+  - **Intense Blink**: At `00:00`, flashes intensely (white to brighter grey) for 5 seconds, resembling a "bomb about to explode."
+  - **Alarm Sound**: Plays a soothing alarm tone for 5 seconds when the timer reaches `00:00`, then resets.
 - **Task List**: Add tasks, automatically struck through when the timer finishes, and toggle strikethrough by clicking the task text.
 - **Modal Controls**: Open with timer click, set time with "Enter" or "Set" button, close with "Escape" or click outside.
 - **Clear Tasks**: Button to remove all tasks.
@@ -16,12 +19,14 @@ A simple web-based productivity timer app designed to help users manage tasks wi
 3. Click the timer to set a custom duration (HH:MM:SS format).
 4. Click "Stop" to pause, "Reset" for default (50:00), or "Clear" to remove tasks.
 5. Click tasks to toggle completion status.
+6. At 10 seconds, the timer blinks; at `00:00`, it blinks intensely and plays an alarm for 5 seconds before resetting.
 
 ## Files
 
 - `index.html`: Main structure.
 - `static/css/style.css`: Styling with greyish dark theme.
 - `static/js/script.js`: Functionality and logic.
+- `static/alarm.mp3`: Soothing alarm sound played at `00:00`.
 
 ## Note
 
@@ -31,11 +36,6 @@ This app is **not fully responsive yet** and is optimized only for screens **lar
 
 1. Clone or download this repository.
 2. Open `index.html` in a browser to run locally.
-
-## Hosting on GitHub Pages
-
-- After pushing to GitHub, enable GitHub Pages in the repository settings (Settings > Pages > Source: `main` branch, `/ (root)` directory).
-- Access it at `https://<username>.github.io/productivity-timer/`.
 
 ## Future Improvements
 

@@ -9,6 +9,7 @@ const taskList = document.getElementById('task-list');
 const clearTasksBtn = document.getElementById('clear-tasks-btn');
 const modal = document.getElementById('time-modal');
 const timeInput = document.getElementById('time-input');
+const alarmSound = document.getElementById('alarm-sound');
 
 toggleBtn.addEventListener('click', toggleTimer);
 resetBtn.addEventListener('click', resetTimer);
@@ -25,22 +26,21 @@ taskInput.addEventListener('keypress', (e) => {
     }
 });
 
-// Modal event listeners
 timeInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
-        setTime(); // Set time on Enter
+        setTime();
     }
 });
 
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && modal.style.display === 'flex') {
-        modal.style.display = 'none'; // Close modal on Escape
+        modal.style.display = 'none';
     }
 });
 
 modal.addEventListener('click', (e) => {
     if (e.target === modal) {
-        modal.style.display = 'none'; // Close modal on click outside
+        modal.style.display = 'none';
     }
 });
 
@@ -51,18 +51,31 @@ function startTimer() {
             timerId = null;
             toggleBtn.textContent = 'Start';
             completeTasks();
-            timeLeft = previousTime;
-            updateDisplay();
+            timerDisplay.classList.remove('blink'); // Remove regular blink
+            timerDisplay.classList.add('blink-intense'); // Start intense blink
+            alarmSound.play(); // Start alarm
+            setTimeout(() => { // Wait 5 seconds
+                alarmSound.pause(); // Stop alarm
+                alarmSound.currentTime = 0; // Reset audio
+                timeLeft = previousTime; // Reset to user-entered time
+                timerDisplay.classList.remove('blink-intense'); // Stop intense blink
+                updateDisplay();
+            }, 5000); // 5000ms = 5 seconds
             return;
         }
         timeLeft--;
         updateDisplay();
+        if (timeLeft <= 10 && !timerDisplay.classList.contains('blink') && !timerDisplay.classList.contains('blink-intense')) {
+            timerDisplay.classList.add('blink'); // Start regular blink at 10s
+        }
     }, 1000);
 }
 
 function pauseTimer() {
     clearInterval(timerId);
     timerId = null;
+    timerDisplay.classList.remove('blink'); // Stop regular blink
+    timerDisplay.classList.remove('blink-intense'); // Stop intense blink
 }
 
 function toggleTimer() {
@@ -86,6 +99,10 @@ function resetTimer() {
     previousTime = 50 * 60;
     updateDisplay();
     toggleBtn.textContent = 'Start';
+    timerDisplay.classList.remove('blink'); // Stop regular blink
+    timerDisplay.classList.remove('blink-intense'); // Stop intense blink
+    alarmSound.pause(); // Stop alarm if running
+    alarmSound.currentTime = 0; // Reset audio
 }
 
 function updateDisplay() {
@@ -111,7 +128,7 @@ function addTask(taskText) {
     const li = document.createElement('li');
     li.textContent = taskText;
     li.onclick = () => {
-        li.classList.toggle('completed'); // Toggle strikethrough on click
+        li.classList.toggle('completed');
     };
     taskList.appendChild(li);
 }
@@ -120,13 +137,20 @@ function completeTasks() {
     const tasks = taskList.getElementsByTagName('li');
     for (let task of tasks) {
         if (!task.classList.contains('completed')) {
-            task.classList.add('completed'); // Strikethrough when timer ends
+            task.classList.add('completed');
         }
     }
 }
 
 function clearTasks() {
     taskList.innerHTML = '';
+}
+
+// Removed toggleBlink function as it's no longer needed
+
+function stopBlinking() {
+    timerDisplay.classList.remove('blink'); // Stop regular blink
+    timerDisplay.classList.remove('blink-intense'); // Stop intense blink
 }
 
 // Initialize display

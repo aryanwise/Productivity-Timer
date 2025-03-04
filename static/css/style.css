@@ -66,6 +66,52 @@ h2 {
     /* Light grey on hover */
 }
 
+#timer.blink {
+    animation: blink 0.9s infinite;
+    /* Regular continuous blink from 10s */
+}
+
+#timer.blink-intense {
+    animation: blink-intense 0.3s infinite;
+    /* Intense blink at 00:00 */
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        color: #ffffff;
+        /* White */
+        text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+        /* White shadow */
+    }
+
+    50% {
+        color: #666;
+        /* Dark grey */
+        text-shadow: 0 0 8px rgba(102, 102, 102, 0.8);
+        /* Grey shadow */
+    }
+}
+
+@keyframes blink-intense {
+
+    0%,
+    100% {
+        color: #ffffff;
+        /* White */
+        text-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
+        /* Stronger white shadow */
+    }
+
+    50% {
+        color: #a0a0a0;
+        /* Brighter grey for intensity */
+        text-shadow: 0 0 12px rgba(160, 160, 160, 1);
+        /* Stronger grey shadow */
+    }
+}
+
 #task-input {
     padding: 15px;
     border: 2px solid #808080;
