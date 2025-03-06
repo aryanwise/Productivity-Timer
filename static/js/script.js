@@ -1,6 +1,8 @@
 let timeLeft = 50 * 60; // Default 50 minutes
 let timerId = null;
 let previousTime = 50 * 60; // Track user's last set time, default to 50:00
+let lastUpdateTime = null; // For background counting
+let isAlarmPlaying = false; // Track alarm state
 const timerDisplay = document.getElementById('timer');
 const toggleBtn = document.getElementById('toggle-btn');
 const resetBtn = document.getElementById('reset-btn');
@@ -45,37 +47,51 @@ modal.addEventListener('click', (e) => {
 });
 
 function startTimer() {
-    timerId = setInterval(() => {
-        if (timeLeft <= 0) {
-            clearInterval(timerId);
-            timerId = null;
-            toggleBtn.textContent = 'Start';
-            completeTasks();
-            timerDisplay.classList.remove('blink'); // Remove regular blink
-            timerDisplay.classList.add('blink-intense'); // Start intense blink
-            alarmSound.play(); // Start alarm
-            setTimeout(() => { // Wait 5 seconds
-                alarmSound.pause(); // Stop alarm
-                alarmSound.currentTime = 0; // Reset audio
-                timeLeft = previousTime; // Reset to user-entered time
-                timerDisplay.classList.remove('blink-intense'); // Stop intense blink
-                updateDisplay();
-            }, 5000); // 5000ms = 5 seconds
-            return;
-        }
-        timeLeft--;
-        updateDisplay();
-        if (timeLeft <= 10 && !timerDisplay.classList.contains('blink') && !timerDisplay.classList.contains('blink-intense')) {
-            timerDisplay.classList.add('blink'); // Start regular blink at 10s
-        }
-    }, 1000);
+    if (!timerId) {
+        lastUpdateTime = Date.now(); // Initial start time
+        timerId = setInterval(() => {
+            const now = Date.now();
+            const elapsed = Math.floor((now - lastUpdateTime) / 1000); // Seconds elapsed
+            if (elapsed > 0) {
+                timeLeft = Math.max(timeLeft - elapsed, 0); // Adjust timeLeft
+                lastUpdateTime = now; // Update last time
+            }
+
+            updateDisplay();
+
+            if (timeLeft <= 10 && !timerDisplay.classList.contains('blink') && !timerDisplay.classList.contains('blink-intense')) {
+                timerDisplay.classList.add('blink'); // Start regular blink
+            }
+
+            if (timeLeft <= 0 && !isAlarmPlaying) {
+                clearInterval(timerId);
+                timerId = null;
+                toggleBtn.textContent = 'Start';
+                completeTasks();
+                timerDisplay.classList.remove('blink');
+                timerDisplay.classList.add('blink-intense');
+                isAlarmPlaying = true;
+                alarmSound.play().catch(error => console.error('Alarm play failed:', error));
+                setTimeout(() => {
+                    alarmSound.pause();
+                    alarmSound.currentTime = 0;
+                    timeLeft = previousTime; // Reset to user-entered time
+                    timerDisplay.classList.remove('blink-intense');
+                    isAlarmPlaying = false;
+                    updateDisplay();
+                }, 5000); // 5 seconds
+            }
+        }, 100); // Check every 100ms for smoother updates
+    }
 }
 
 function pauseTimer() {
-    clearInterval(timerId);
-    timerId = null;
-    timerDisplay.classList.remove('blink'); // Stop regular blink
-    timerDisplay.classList.remove('blink-intense'); // Stop intense blink
+    if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+        timerDisplay.classList.remove('blink');
+        timerDisplay.classList.remove('blink-intense');
+    }
 }
 
 function toggleTimer() {
@@ -94,15 +110,20 @@ function toggleTimer() {
 }
 
 function resetTimer() {
-    pauseTimer();
+    if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+    }
     timeLeft = 50 * 60;
     previousTime = 50 * 60;
     updateDisplay();
     toggleBtn.textContent = 'Start';
-    timerDisplay.classList.remove('blink'); // Stop regular blink
-    timerDisplay.classList.remove('blink-intense'); // Stop intense blink
-    alarmSound.pause(); // Stop alarm if running
-    alarmSound.currentTime = 0; // Reset audio
+    timerDisplay.classList.remove('blink');
+    timerDisplay.classList.remove('blink-intense');
+    alarmSound.pause();
+    alarmSound.currentTime = 0;
+    isAlarmPlaying = false;
+    lastUpdateTime = null;
 }
 
 function updateDisplay() {
@@ -122,6 +143,11 @@ function setTime() {
     previousTime = timeLeft;
     updateDisplay();
     modal.style.display = 'none';
+    if (timerId) {
+        lastUpdateTime = Date.now(); // Reset lastUpdateTime if running
+    } else {
+        lastUpdateTime = null; // Reset if not running
+    }
 }
 
 function addTask(taskText) {
@@ -144,13 +170,6 @@ function completeTasks() {
 
 function clearTasks() {
     taskList.innerHTML = '';
-}
-
-// Removed toggleBlink function as it's no longer needed
-
-function stopBlinking() {
-    timerDisplay.classList.remove('blink'); // Stop regular blink
-    timerDisplay.classList.remove('blink-intense'); // Stop intense blink
 }
 
 // Initialize display
