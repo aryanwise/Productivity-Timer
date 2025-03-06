@@ -26,7 +26,6 @@ A simple web-based productivity timer app designed to help users manage tasks wi
 - `index.html`: Main structure.
 - `static/css/style.css`: Styling with greyish dark theme.
 - `static/js/script.js`: Functionality and logic.
-- `static/js/script.js`: Functionality, timer logic with `requestAnimationFrame`, and audio control.
 - `static/alarm.mp3`: Soothing alarm sound played at `00:00`.
 
 ## Note
